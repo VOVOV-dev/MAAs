@@ -3,10 +3,10 @@
   "run_minute": 0,
   "cooldown_sec": 15,
   "schedule": [
-    { "name": "原神", "adapter": "bettergi", "random_config": true, "timeout_min": 30 },
-    { "name": "星穹铁道", "adapter": "march7th", "random_config": true, "timeout_min": 90 },
-    { "name": "绝区零", "adapter": "zzz", "random_config": false, "timeout_min": 60 },
+    { "name": "原神", "adapter": "bettergi", "random_config": true, "timeout_min": 30, "window": ["04:00", "18:00"] },
+    { "name": "星穹铁道", "adapter": "march7th", "random_config": true, "timeout_min": 90, "window": ["04:00", "18:00"] },
+    { "name": "绝区零", "adapter": "zzz", "random_config": false, "timeout_min": 60, "window": ["04:00", "18:00"] },
     { "name": "明日方舟", "adapter": "maa", "random_config": false, "timeout_min": 30 },
-    { "name": "终末地", "adapter": "maaend", "random_config": false, "timeout_min": 30 }
+    { "name": "终末地", "adapter": "maaend", "random_config": false, "timeout_min": 30, "window": ["04:00", "18:00"] }
   ]
 }

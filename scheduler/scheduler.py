@@ -48,6 +48,23 @@ def load_plan():
         return json.load(f)
 
 
+def _in_window(s, now=None):
+    """判断当前时间是否在该游戏的可运行窗口内。
+
+    plan.json 的 schedule 项可选 "window": ["HH:MM", "HH:MM"]；
+    未配置 window 视为全天可跑。支持跨天窗口（如 ["18:00", "04:00"]）。
+    """
+    window = s.get("window")
+    if not window:
+        return True
+    start, end = window[0], window[1]
+    now = now or datetime.now().strftime("%H:%M")
+    if start <= end:
+        return start <= now < end
+    # 跨天窗口：如 18:00-04:00
+    return now >= start or now < end
+
+
 def run_once(only=None, dry_run=False):
     """执行一轮：每个游戏 随机决策→写配置→启动→检测→关闭。"""
     plan = load_plan()
@@ -55,6 +72,12 @@ def run_once(only=None, dry_run=False):
 
     for s in plan.get("schedule", []):
         if only and s.get("name") not in only and s.get("adapter") not in only:
+            continue
+        # 时间窗口过滤：--only 显式指定时强制运行，忽略窗口
+        if not only and not _in_window(s):
+            print("  [跳过] {} 不在运行窗口（window={}，当前 {}）".format(
+                s.get("name"), s.get("window"),
+                datetime.now().strftime("%H:%M")))
             continue
         try:
             adapter = create(s["adapter"])
@@ -149,9 +172,10 @@ def main():
         print("调度计划（每天 {}:{:02d} 执行）：".format(
             plan.get("run_hour", 4), plan.get("run_minute", 0)))
         for i, s in enumerate(steps, 1):
-            print("  [{0}] {1}  (adapter={2}, random_config={3}, timeout={4}min)".format(
+            win = "window={}".format("~".join(s["window"])) if s.get("window") else "window=全天"
+            print("  [{0}] {1}  (adapter={2}, random_config={3}, timeout={4}min, {5})".format(
                 i, s.get("name"), s.get("adapter"),
-                s.get("random_config", False), s.get("timeout_min", 60)))
+                s.get("random_config", False), s.get("timeout_min", 60), win))
         return
 
     if args.once or args.dry_run:
