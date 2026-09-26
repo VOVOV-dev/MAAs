@@ -1,0 +1,29 @@
+# ===================== 第三方游戏工具（体积大，由 setup.ps1 下载解压）=====================
+/MAA-v6.18.0-win-x64/
+/Endfield/
+/Genshin/
+/StarRail/
+/ZZZ/
+
+# ===================== 下载的压缩包 =====================
+*.zip
+*.7z
+/downloads/
+
+# ===================== 绿色 Python 运行时（由 setup.ps1 下载）=====================
+/scheduler/python/
+
+# ===================== 运行时产物 =====================
+/scheduler/logs/
+/scheduler/state/
+__pycache__/
+*.pyc
+*.pyo
+
+# ===================== 编辑器 / 系统 =====================
+.vs/
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

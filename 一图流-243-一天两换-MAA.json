@@ -1,0 +1,313 @@
+{
+  "planTimes": "2班",
+  "scheduleType": {
+    "planTimes": 2,
+    "trading": 2,
+    "manufacture": 4,
+    "power": 3,
+    "dormitory": 4
+  },
+  "title": "一图流排班表-20260924-243两换",
+  "author": "",
+  "description": "由一图流基建排班表生成器导出。",
+  "plans": [
+    {
+      "name": "B班",
+      "duration": 720,
+      "rooms": {
+        "control": [
+          {
+            "operators": [
+              "八幡海铃",
+              "明椒",
+              "麒麟R夜刀",
+              "火龙S黑角",
+              "杜宾"
+            ],
+            "sort": true
+          }
+        ],
+        "trading": [
+          {
+            "operators": [
+              "德克萨斯",
+              "拉普兰德",
+              "古米"
+            ],
+            "sort": true,
+            "product": "LMD"
+          },
+          {
+            "operators": [
+              "蕾缪安",
+              "新约能天使",
+              "空爆"
+            ],
+            "sort": true,
+            "product": "LMD"
+          }
+        ],
+        "manufacture": [
+          {
+            "operators": [
+              "白面鸮",
+              "杰西卡",
+              "结城理"
+            ],
+            "sort": true,
+            "product": "Battle Record"
+          },
+          {
+            "operators": [
+              "克洛丝",
+              "裁度",
+              "钼铅"
+            ],
+            "sort": true,
+            "product": "Pure Gold"
+          },
+          {
+            "operators": [
+              "泡普卡",
+              "香草",
+              "芬"
+            ],
+            "sort": true,
+            "product": "Battle Record"
+          },
+          {
+            "operators": [
+              "杏仁",
+              "雪猎",
+              "至简"
+            ],
+            "sort": true,
+            "product": "Pure Gold"
+          }
+        ],
+        "power": [
+          {
+            "operators": [
+              "埃癸斯"
+            ],
+            "sort": false
+          },
+          {
+            "operators": [
+              "布丁"
+            ],
+            "sort": false
+          },
+          {
+            "operators": [
+              "海霓"
+            ],
+            "sort": false
+          }
+        ],
+        "meeting": [
+          {
+            "operators": [
+              "梅",
+              "伺夜"
+            ],
+            "sort": false
+          }
+        ],
+        "hire": [
+          {
+            "operators": [
+              "珊比"
+            ],
+            "sort": false
+          }
+        ],
+        "dormitory": [
+          {
+            "operators": [],
+            "sort": false,
+            "autofill": true
+          },
+          {
+            "operators": [],
+            "sort": false,
+            "autofill": true
+          },
+          {
+            "operators": [],
+            "sort": false,
+            "autofill": true
+          },
+          {
+            "operators": [],
+            "sort": false,
+            "autofill": true
+          }
+        ]
+      },
+      "period": [
+        [
+          "08:00",
+          "10:00"
+        ]
+      ],
+      "drones": {
+        "enable": true,
+        "room": "trading",
+        "index": 1,
+        "rule": "all",
+        "order": "pre"
+      }
+    },
+    {
+      "name": "A班",
+      "duration": 720,
+      "rooms": {
+        "control": [
+          {
+            "operators": [
+              "焰狐龙梓兰",
+              "阿米娅",
+              "Mon3tr",
+              "电弧",
+              "冰酿"
+            ],
+            "sort": true
+          }
+        ],
+        "trading": [
+          {
+            "operators": [
+              "但书",
+              "维娜·维多利亚",
+              "夜刀"
+            ],
+            "sort": true,
+            "product": "LMD"
+          },
+          {
+            "operators": [
+              "可露希尔",
+              "慕斯",
+              "深巡"
+            ],
+            "sort": true,
+            "product": "LMD"
+          }
+        ],
+        "manufacture": [
+          {
+            "operators": [
+              "酒神",
+              "红豆",
+              "机械师"
+            ],
+            "sort": true,
+            "product": "Battle Record"
+          },
+          {
+            "operators": [
+              "砾",
+              "苍苔",
+              "引星棘刺"
+            ],
+            "sort": true,
+            "product": "Pure Gold"
+          },
+          {
+            "operators": [
+              "圣约送葬人",
+              "食铁兽",
+              "铅踝"
+            ],
+            "sort": true,
+            "product": "Battle Record"
+          },
+          {
+            "operators": [
+              "清流",
+              "夜烟",
+              "阿罗玛"
+            ],
+            "sort": true,
+            "product": "Pure Gold"
+          }
+        ],
+        "power": [
+          {
+            "operators": [
+              "承曦格雷伊"
+            ],
+            "sort": false
+          },
+          {
+            "operators": [
+              "烛煌"
+            ],
+            "sort": false
+          },
+          {
+            "operators": [
+              "格雷伊"
+            ],
+            "sort": false
+          }
+        ],
+        "meeting": [
+          {
+            "operators": [
+              "赤刃明霄陈",
+              "信仰搅拌机"
+            ],
+            "sort": false
+          }
+        ],
+        "hire": [
+          {
+            "operators": [
+              "淬羽赫默"
+            ],
+            "sort": false
+          }
+        ],
+        "dormitory": [
+          {
+            "operators": [
+              "乌尔比安"
+            ],
+            "sort": false,
+            "autofill": true
+          },
+          {
+            "operators": [],
+            "sort": false,
+            "autofill": true
+          },
+          {
+            "operators": [],
+            "sort": false,
+            "autofill": true
+          },
+          {
+            "operators": [],
+            "sort": false,
+            "autofill": true
+          }
+        ]
+      },
+      "period": [
+        [
+          "20:00",
+          "22:00"
+        ]
+      ],
+      "drones": {
+        "enable": true,
+        "room": "trading",
+        "index": 1,
+        "rule": "all",
+        "order": "pre"
+      }
+    }
+  ]
+}

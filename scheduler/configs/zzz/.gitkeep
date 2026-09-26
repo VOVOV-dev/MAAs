@@ -1,0 +1,4 @@
+# 该目录存放绝区零（OneDragon）的配置单 JSON。
+# 文件名不含下划线前缀的 .json 会被调度器识别为配置单。
+# 留空时 plan.json 里 zzz 项的 random_config 应为 false。
+# ZZZ 配置单需在 JSON 里用 "target" 指定 src/zzz_od/config 下文件。
