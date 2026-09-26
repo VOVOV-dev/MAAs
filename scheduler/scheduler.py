@@ -66,23 +66,36 @@ def _in_window(s, now=None):
 
 
 def run_once(only=None, dry_run=False):
-    """执行一轮：每个游戏 随机决策→写配置→启动→检测→关闭。"""
+    """执行一轮：每个游戏 随机决策→写配置→启动→检测→关闭，最后输出执行汇总。"""
     plan = load_plan()
     only = set(x.strip() for x in only.split(",")) if only else None
+    results = []
+
+    def record(name, adapter_name, status, elapsed=None, detail=""):
+        results.append({
+            "name": name,
+            "adapter": adapter_name,
+            "status": status,
+            "elapsed": elapsed,
+            "detail": detail,
+        })
 
     for s in plan.get("schedule", []):
-        if only and s.get("name") not in only and s.get("adapter") not in only:
+        name = s.get("name")
+        ad_name = s.get("adapter")
+        if only and name not in only and ad_name not in only:
             continue
         # 时间窗口过滤：--only 显式指定时强制运行，忽略窗口
         if not only and not _in_window(s):
             print("  [跳过] {} 不在运行窗口（window={}，当前 {}）".format(
-                s.get("name"), s.get("window"),
-                datetime.now().strftime("%H:%M")))
+                name, s.get("window"), datetime.now().strftime("%H:%M")))
+            record(name, ad_name, "跳过", detail="不在运行窗口")
             continue
         try:
-            adapter = create(s["adapter"])
+            adapter = create(ad_name)
         except ValueError as e:
             print("跳过: {}".format(e))
+            record(name, ad_name, "跳过", detail=str(e))
             continue
 
         print("\n========== {} ==========".format(adapter.display_name))
@@ -99,6 +112,7 @@ def run_once(only=None, dry_run=False):
 
         if dry_run:
             print("  [dry-run] 将套用配置单: {}".format(config_name))
+            record(name, ad_name, "预览", detail="未实际执行")
             continue
 
         ok = adapter.run(
@@ -107,12 +121,53 @@ def run_once(only=None, dry_run=False):
             poll_sec=s.get("poll_sec", 10),
             cooldown_sec=plan.get("cooldown_sec", 15),
         )
-        print("  结果: {}".format("正常完成" if ok else "失败/超时"))
+        res = getattr(adapter, "last_result", None) or {}
+        elapsed = res.get("elapsed")
+        detail = res.get("detail", "")
+        if ok:
+            status = "成功"
+        elif res.get("status") == "timeout":
+            status = "超时"
+        else:
+            status = "失败"
+        time_str = "{:.1f} 分钟".format(elapsed / 60.0) if elapsed is not None else "-"
+        print("  结果: {}（耗时 {}）{}".format(
+            status, time_str, "（{}）".format(detail) if detail else ""))
+        record(name, ad_name, status, elapsed=elapsed, detail=detail)
         if not ok and s.get("stop_on_fail"):
             print("  配置了 stop_on_fail，停止后续任务")
             break
 
     print("\n本轮调度结束。")
+    _print_summary(results)
+
+
+def _print_summary(results):
+    """输出本轮执行情况汇总。"""
+    if not results:
+        return
+    print("\n" + "=" * 62)
+    print("  本轮执行汇总")
+    print("=" * 62)
+    success = failed = skipped = 0
+    for i, r in enumerate(results, 1):
+        status = r["status"]
+        elapsed = r.get("elapsed")
+        time_str = "{:.1f} 分钟".format(elapsed / 60.0) if elapsed is not None else "-"
+        line = "  [{0}] {1} | {2} | 耗时 {3}".format(i, r["name"], status, time_str)
+        if r.get("detail"):
+            line += " | {}".format(r["detail"])
+        print(line)
+        if status == "成功":
+            success += 1
+        elif status in ("失败", "超时"):
+            failed += 1
+        else:
+            skipped += 1
+    print("-" * 62)
+    print("  合计 {} 项：成功 {}，失败/超时 {}，跳过 {}".format(
+        len(results), success, failed, skipped))
+    print("=" * 62)
 
 
 def sleep_until(hour, minute):

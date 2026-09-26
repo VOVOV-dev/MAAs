@@ -169,25 +169,41 @@ class GameAdapter(ABC):
 
         返回是否正常完成。无论正常结束、超时还是启动失败，
         都会强制清理进程并等待确认退出，避免影响下一个游戏。
+        执行详情记录在 self.last_result（status / detail / elapsed 秒）。
         """
+        t0 = time.time()
+        self.last_result = {"status": "success", "detail": "", "elapsed": 0}
         if config_name:
             try:
                 self.apply_config(config_name)
             except Exception as e:
                 self.log("应用配置失败: {}".format(e))
+                self.last_result.update({
+                    "status": "failed", "detail": "应用配置失败",
+                    "elapsed": time.time() - t0})
                 return False
         try:
             self.start()
         except Exception as e:
             self.log("启动失败: {}".format(e))
             self._cleanup()
+            self.last_result.update({
+                "status": "failed", "detail": "启动失败",
+                "elapsed": time.time() - t0})
             return False
         self.log("已启动")
         ok = self.wait_finish(timeout_min, poll_sec)
+        elapsed = time.time() - t0
         if ok:
             self.log("运行结束")
+            self.last_result.update(
+                {"status": "success", "detail": "", "elapsed": elapsed})
         else:
             self.log("超时未完成（{} 分钟），强制关闭".format(timeout_min))
+            self.last_result.update({
+                "status": "timeout",
+                "detail": "超时（{} 分钟）".format(timeout_min),
+                "elapsed": elapsed})
         self._cleanup()
         time.sleep(cooldown_sec)
         return ok
