@@ -34,12 +34,17 @@ GAME_DIRS = {
 
 
 def process_exists(proc_name):
-    """检测进程名是否存活（Windows，无第三方依赖）。"""
+    """检测进程名是否存活（Windows，无第三方依赖）。
+
+    使用 tasklist /FO CSV 输出，避免默认表格格式把长进程名
+    （如 OneDragon-RuntimeLauncher.exe 28 字符）截断导致误判。
+    """
     if not proc_name.lower().endswith(".exe"):
         proc_name += ".exe"
     try:
         r = subprocess.run(
-            ["tasklist", "/FI", "IMAGENAME eq {}".format(proc_name), "/NH"],
+            ["tasklist", "/FO", "CSV",
+             "/FI", "IMAGENAME eq {}".format(proc_name), "/NH"],
             capture_output=True, text=True, timeout=10,
         )
         return proc_name.lower() in r.stdout.lower()
@@ -314,22 +319,40 @@ class GameAdapter(ABC):
 
     # ---------- YAML 顶层字段替换（用于 March7th 的 config.yaml） ----------
     def replace_yaml_fields(self, target, fields):
-        """替换 YAML 文件顶层字段（单行 key: value 形式）。
+        """替换 YAML 文件顶层字段（key: value 形式）。
 
         fields: {key: value}，value 用 JSON 序列化（JSON 是合法 YAML）。
+        逐行定位顶格 key 行，替换为单行值，并删除后续多行旧值
+        （包括 block 列表项），避免 March7th 保存的多行格式残留导致损坏。
         """
         self.backup_file(target)
         with open(target, "r", encoding="utf-8") as f:
-            text = f.read()
+            lines = f.read().splitlines(keepends=True)
         for key, value in fields.items():
             yaml_val = json.dumps(value, ensure_ascii=False)
-            pattern = re.compile(
-                r"^(\s*{}\s*:\s*).*$".format(re.escape(key)), re.MULTILINE)
-            if pattern.search(text):
-                text = pattern.sub(
-                    lambda m: m.group(1) + yaml_val, text, count=1)
-            else:
-                text += "\n{}: {}\n".format(key, yaml_val)
+            # 只匹配顶格 key，[ \t]* 不跨行（避免吞掉换行）
+            key_re = re.compile(r"^({}[ \t]*:[ \t]*)".format(re.escape(key)))
+            replaced = False
+            for i, line in enumerate(lines):
+                m = key_re.match(line)
+                if not m:
+                    continue
+                lines[i] = "{}: {}\n".format(key, yaml_val)
+                # 删除后续多行旧值：缩进行 + 顶格 block 列表项
+                j = i + 1
+                while j < len(lines):
+                    nxt = lines[j]
+                    stripped = nxt.strip()
+                    if stripped == "" or stripped.startswith("#"):
+                        break  # 空行/注释，停止
+                    if not (nxt.startswith(" ") or nxt.startswith("\t") or nxt.startswith("-")):
+                        break  # 顶格非列表项 = 下一个键，停止
+                    j += 1
+                del lines[i + 1:j]
+                replaced = True
+                break
+            if not replaced:
+                lines.append("{}: {}\n".format(key, yaml_val))
         with open(target, "w", encoding="utf-8") as f:
-            f.write(text)
+            f.writelines(lines)
         self.log("已替换字段 {} -> {}".format(list(fields.keys()), target))
