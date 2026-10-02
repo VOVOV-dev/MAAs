@@ -8,10 +8,13 @@
 d:\MAAs\
 ├─ setup.ps1             一键部署：下载 Python + 5 款工具并解压
 ├─ download.ps1          仅下载压缩包（备选）
+├─ 启动调度器.bat         双击启动常驻调度器（自动提权）
+├─ 补跑游戏.bat           双击补跑单个游戏（查漏补缺，自动提权）
 ├─ plan.txt              日常需求备忘
 ├─ 一图流-243-一天两换-MAA.json   MAA 作业文件
 ├─ scheduler/
 │  ├─ scheduler.py       主入口
+│  ├─ run_one.py         补跑脚本（单独运行某个游戏助手）
 │  ├─ plan.json          调度计划（顺序 / 超时 / 随机配置）
 │  ├─ games/             5 个游戏适配器
 │  ├─ configs/           配置单（原神秘境、星铁材料本等）
@@ -54,6 +57,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 
 每款游戏**手动打开登录一次**，保持登录态。
 
+<p align="center"><span style="color:#ff0000; font-size:36px; font-weight:bold;">⚠️ 每个游戏必须先手动完整做一遍日常，否则新手教程弹窗会挡住自动化！</span></p>
+
 **4. 各工具首次配置（每个只做一次）**
 
 - **MAA**：连接模拟器（MuMu 12 adb 地址 `127.0.0.1:16384`，老版 `127.0.0.1:7555`），设好关卡
@@ -87,6 +92,20 @@ scheduler\python\python.exe scheduler\scheduler.py              # 常驻，每�
 - 顺序：原神 → 星穹铁道 → 绝区零 → 明日方舟 → 终末地
 - 星铁超时 90 分钟（差分宇宙耗时），其余 30–60 分钟
 
+### 补跑单个游戏（查漏补缺）
+
+某天调度器跑完发现某个游戏没做完（超时/失败/被跳过），用「补跑游戏.bat」单独补跑，不影响其他游戏：
+
+```bat
+补跑游戏.bat                    双击后交互式选择（输入序号/游戏名，如 1、1,3、终末地、all）
+补跑游戏.bat maaend             按适配器名直接补跑终末地
+补跑游戏.bat 终末地 --kill      先清理残留进程再补跑
+补跑游戏.bat 明日方舟 --config 快速日常 --timeout 60   指定配置单并延长超时
+```
+
+等价命令行：`scheduler\python\python.exe scheduler\run_one.py ...`。
+若检测到该游戏的工具进程仍在运行（如上午超时没跑完的残留），交互模式会询问是否先强制清理；命令行模式默认跳过并提示，加 `--kill` 则自动清理。
+
 ### 各游戏关键配置
 
 | 游戏 | 配置要点 |
@@ -95,7 +114,7 @@ scheduler\python\python.exe scheduler\scheduler.py              # 常驻，每�
 | 星铁 March7th | 模拟宇宙每周打 1 局（`universe_count: 1`）；随机刷材料本；跑完自动退出（`after_finish: Exit`） |
 | 绝区零 OneDragon | 6 项日常（刮刮卡/录像店/咖啡/体力/迷失之地/枯萎之都）；空洞每周打一次 |
 | 明日方舟 MAA | 全天可跑（夜间只跑它）；连 MuMu 模拟器 |
-| 终末地 MaaEnd | 快速日常；控制器 `win32-Front` |
+| 终末地 MaaEnd | 快速日常 + 自动精粹清体力（随机模式）；控制器 `win32-Front` |
 
 ## 常见问题排查
 
@@ -114,4 +133,10 @@ scheduler\python\python.exe scheduler\scheduler.py              # 常驻，每�
 7. **排查入口** —— 调度器日志 `scheduler/logs/<游戏名>.log`；OneDragon 日志 `ZZZ/.log/log.txt`；March7th 日志 `StarRail/logs/`。
 
 8. **换机器后配置丢失** —— `python/`、`logs/`、`state/` 及 5 个工具目录不入库。重跑 `setup.ps1` 后，游戏内配置（星铁 `config.yaml`、绝区零空洞、原神一条龙等）需按上表重设一次。
+
+9. **终末地清体力失败（MaaEnd 跑 1~2 分钟就结束）** —— 两个常见原因：① 第一次进入「基质刷取」（重度能量淬积点）界面时，游戏会弹新手教程浮窗挡住「开启挑战」按钮，导致识别超时，手动进游戏关掉教程浮窗（点右上角 ×）一次即可；② 随机模式从 12 个刷点里随机选，**未解锁的地点（如界碑石）地图上找不到会导致导航失败**，已把刷点限制为枢纽区（`mxu-MaaEnd.json` 里 `AutoEssenceChooseLocation` 只勾 `VFTheHub`）。想刷其他地点，先在游戏里解锁，再在 MaaEnd GUI 里勾选对应地点。
+
+10. **终末地每日奖励没领到** —— `DailyRewards` 任务识别失败（MaaEnd 模板与当前游戏版本不匹配）。先在 MaaEnd GUI 里单独跑一次观察卡在哪一步；持续失败就更新 MaaEnd 到最新版（`setup.ps1`/`download.ps1` 里的版本号同步更新）。
+
+11. **终末地任务排查入口** —— MaaEnd 主日志 `Endfield/debug/<日期>-1.log`；框架识别日志 `Endfield/debug/maafw.log`；失败时的界面截图在 `Endfield/debug/on_error/`（可直接看图定位卡点）。
 

@@ -87,11 +87,11 @@ if (-not (Test-Installed $maaExe)) {
 
 # ===================== 3. MaaEnd（终末地） =====================
 Write-Host ""
-Write-Host "▶ [3/6] 终末地 MaaEnd v2.29.0" -ForegroundColor White
+Write-Host "▶ [3/6] 终末地 MaaEnd v2.30.1" -ForegroundColor White
 $maaendExe = Join-Path $Root "Endfield\MaaEnd.exe"
 if (-not (Test-Installed $maaendExe)) {
-    $maaendZip = Join-Path $Tmp "MaaEnd-win-x86_64-v2.29.0.zip"
-    Download-File "https://github.com/MaaEnd/MaaEnd/releases/download/v2.29.0/MaaEnd-win-x86_64-v2.29.0.zip" $maaendZip
+    $maaendZip = Join-Path $Tmp "MaaEnd-win-x86_64-v2.30.1.zip"
+    Download-File "https://github.com/MaaEnd/MaaEnd/releases/download/v2.30.1/MaaEnd-win-x86_64-v2.30.1.zip" $maaendZip
     Expand-Archive2 $maaendZip (Join-Path $Root "Endfield") 0
 }
 

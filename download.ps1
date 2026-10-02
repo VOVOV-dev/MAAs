@@ -42,7 +42,7 @@ Write-Host "开始下载 5 款游戏自动代理工具..." -ForegroundColor Mage
 
 $ok = $true
 $ok = (Download-File -Title "[1/5] 明日方舟 MAA (v6.18.0)" -Out "d:\MAAs\MAA-v6.18.0-win-x64.zip" -Url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/releases/download/v6.18.0/MAA-v6.18.0-win-x64.zip") -and $ok
-$ok = (Download-File -Title "[2/5] 终末地 MaaEnd (v2.29.0)" -Out "d:\MAAs\Endfield\MaaEnd-win-x86_64-v2.29.0.zip" -Url "https://github.com/MaaEnd/MaaEnd/releases/download/v2.29.0/MaaEnd-win-x86_64-v2.29.0.zip") -and $ok
+$ok = (Download-File -Title "[2/5] 终末地 MaaEnd (v2.30.1)" -Out "d:\MAAs\Endfield\MaaEnd-win-x86_64-v2.30.1.zip" -Url "https://github.com/MaaEnd/MaaEnd/releases/download/v2.30.1/MaaEnd-win-x86_64-v2.30.1.zip") -and $ok
 $ok = (Download-File -Title "[3/5] 原神 BetterGI (0.65.0)" -Out "d:\MAAs\Genshin\BetterGI_v0.65.0.7z" -Url "https://github.com/babalae/better-genshin-impact/releases/download/0.65.0/BetterGI_v0.65.0.7z") -and $ok
 $ok = (Download-File -Title "[4/5] 星穹铁道 March7thAssistant (v2026.9.25)" -Out "d:\MAAs\StarRail\March7thAssistant_full.7z" -Url "https://github.com/moesnow/March7thAssistant/releases/download/v2026.9.25/March7thAssistant_full.7z") -and $ok
 $ok = (Download-File -Title "[5/5] 绝区零 ZZZ-OneDragon (v2.5.2)" -Out "d:\MAAs\ZZZ\ZenlessZoneZero-OneDragon-v2.5.2-WithRuntime-Full.zip" -Url "https://github.com/OneDragon-Anything/ZenlessZoneZero-OneDragon/releases/download/v2.5.2/ZenlessZoneZero-OneDragon-v2.5.2-WithRuntime-Full.zip") -and $ok
